@@ -54,7 +54,7 @@ export class DynamicForm {
       <Host>
         <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
           {myControls.map((ctl) => {
-            const binding = control(this.data, ctl.name);
+            const binding = control(this.data[ctl.name], {});
             return (
               <section>
                 <div>
