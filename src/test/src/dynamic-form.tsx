@@ -1,23 +1,5 @@
-import { Component, h, Host, Prop, State } from '@stencil/core';
-import {
-  bind,
-  bindBoolean,
-  bindNumber,
-  controlBoolean,
-  control,
-  controlGroup,
-  labelFor,
-  descriptionFor,
-  isValid,
-  isInvalid,
-  isActivelyValidating,
-  activelyValidatingMessage,
-  isDirty,
-  isTouched,
-  validationFor,
-  validationMessage,
-  submitValidity,
-} from '../../index';
+import { Component, h, Host, State } from '@stencil/core';
+import { control, labelFor, descriptionFor, validationFor, validationMessage, submitValidity } from '../../index';
 
 const myData: any = {
   name: 'Danny',
@@ -55,8 +37,6 @@ export class DynamicForm {
     //   return;
     // }
     const formData = new FormData(this.formEl);
-    // console.log('BF formData', formData);
-    // console.log('BF Object.fromEntries(formData as any)', Object.fromEntries(formData as any));
     this.data = Object.fromEntries(formData as any);
     this.json = JSON.stringify(this.data, null, 2);
   }
@@ -74,7 +54,7 @@ export class DynamicForm {
       <Host>
         <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
           {myControls.map((ctl) => {
-            const binding = bind(this.data, ctl.name);
+            const binding = control(this.data, ctl.name);
             return (
               <section>
                 <div>
