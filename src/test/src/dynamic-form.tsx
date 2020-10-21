@@ -55,7 +55,9 @@ export class DynamicForm {
         <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
           {myControls.map((ctl) => {
             const initialValue = this.data[ctl.name];
-            const binding = control(initialValue, {});
+            const binding = control(initialValue, {
+              debounce: 500,
+            });
             return (
               <section>
                 <div>
@@ -70,7 +72,7 @@ export class DynamicForm {
                     required
                     {...binding()}
                     {...(ctl.name === 'email' && { type: 'email' })}
-                    value={this.data[ctl.name]}
+                    // value={this.data[ctl.name]}
                   />
                 </div>
                 <span {...validationFor(binding)}>{validationMessage(binding)}</span>
