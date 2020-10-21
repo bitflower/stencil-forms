@@ -1,6 +1,6 @@
 import { Component, h, Host, State } from '@stencil/core';
 import { control, labelFor, descriptionFor, validationFor, validationMessage, submitValidity } from '../../index';
-import { ReactiveFormEvent } from '../../types';
+import { ReactiveFormEvent, ReactiveFormControl } from '../../types';
 
 const myData: any = {
   name: 'Danny',
@@ -11,12 +11,15 @@ const myData: any = {
 const myControls: any[] = [
   {
     name: 'name',
+    type: 'text',
   },
   {
     name: 'email',
+    type: 'email',
   },
   {
     name: 'address',
+    type: 'text',
   },
 ];
 
@@ -27,7 +30,8 @@ const myControls: any[] = [
 export class DynamicForm {
   protected formEl: HTMLFormElement;
 
-  @State() data = myData;
+  // @State()
+  data = myData;
   @State() json = '';
 
   //   componentWillLoad() {
@@ -39,6 +43,7 @@ export class DynamicForm {
     // }
     const formData = new FormData(this.formEl);
     this.data = Object.fromEntries(formData as any);
+    console.log(`buildFormData`, { 'this.data': this.data });
     this.json = JSON.stringify(this.data, null, 2);
   }
 
@@ -50,19 +55,58 @@ export class DynamicForm {
     console.info('submit', this.json);
   };
 
+  onValueChange(name: string, e: ReactiveFormEvent) {
+    console.log('onValueChange', name, e);
+  }
+
   render() {
+    const dynamicControls: { ctl: any; binding: ReactiveFormControl }[] = myControls.map((ctl) => ({
+      ctl,
+      binding: control(this.data[ctl.name], {
+        onValueChange: ({ value }) => {
+          console.log(`${ctl.name} change: ${value}`);
+          this.data = {
+            ...this.data,
+            [ctl.name]: value,
+          };
+        },
+        onCommit({ value }) {
+          console.log(`${ctl.name} commit: ${value}`);
+        },
+      }),
+    }));
+
     return (
       <Host>
-        <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
-          {myControls.map((ctl) => {
+        <form
+        // onInput={this.onSubmit} ref={(el) => (this.formEl = el)}
+        >
+          {dynamicControls.map((ctl) => (
+            <section>
+              <div>
+                <label {...labelFor(ctl.binding)}>MyData</label>
+              </div>
+              <div {...descriptionFor(ctl.binding)}>
+                data.{ctl.ctl.name}: {this.data[ctl.ctl.name]}
+              </div>
+              <div>
+                <input type={ctl.ctl.type} required {...ctl.binding()} />
+              </div>
+              <div {...validationFor(ctl.binding)}>{validationMessage(ctl.binding)}</div>
+            </section>
+          ))}
+          {/* {myControls.map((ctl) => {
             const initialValue = this.data[ctl.name];
             const { name } = ctl;
-            console.log(`Control`, { ctl, name, initialValue });
+            console.log(`Control`, { 'this.data': this.data, ctl, name, initialValue });
             const binding = control(initialValue, {
-              debounce: 500,
-              validate: (e: ReactiveFormEvent) => {
-                console.log('validate', e);
-              },
+              propName: name,
+              // debounce: 500,
+              // validate: (e: ReactiveFormEvent) => {
+              //   console.log('validate', e);
+              //   return '';
+              // },
+              onValueChange: (e) => this.onValueChange(name, e),
             });
             return (
               <section>
@@ -78,13 +122,13 @@ export class DynamicForm {
                     required
                     {...binding()}
                     {...(name === 'email' && { type: 'email' })}
-                    // value={this.data[ctl.name]}
+                    // value={initialValue}
                   />
                 </div>
                 <span {...validationFor(binding)}>{validationMessage(binding)}</span>
               </section>
             );
-          })}
+          })} */}
           <section>
             <button type="submit" {...submitValidity('')}>
               Submit
