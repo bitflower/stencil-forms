@@ -1,5 +1,6 @@
 import { Component, h, Host, State } from '@stencil/core';
 import { control, labelFor, descriptionFor, validationFor, validationMessage, submitValidity } from '../../index';
+import { ReactiveFormEvent } from '../../types';
 
 const myData: any = {
   name: 'Danny',
@@ -55,23 +56,28 @@ export class DynamicForm {
         <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
           {myControls.map((ctl) => {
             const initialValue = this.data[ctl.name];
+            const { name } = ctl;
+            console.log(`Control`, { ctl, name, initialValue });
             const binding = control(initialValue, {
               debounce: 500,
+              validate: (e: ReactiveFormEvent) => {
+                console.log('validate', e);
+              },
             });
             return (
               <section>
                 <div>
-                  <label {...labelFor(binding)}>{ctl.name}</label>
+                  <label {...labelFor(binding)}>{name}</label>
                 </div>
                 <div {...descriptionFor(binding)}>
-                  What's your {ctl.name}? {this.data[ctl.name]}
+                  What's your {name}? {this.data[name]}
                 </div>
                 <div>
                   <input
-                    name={ctl.name}
+                    name={name}
                     required
                     {...binding()}
-                    {...(ctl.name === 'email' && { type: 'email' })}
+                    {...(name === 'email' && { type: 'email' })}
                     // value={this.data[ctl.name]}
                   />
                 </div>
