@@ -30,8 +30,7 @@ const myControls: any[] = [
 export class DynamicForm {
   protected formEl: HTMLFormElement;
 
-  // @State()
-  data = myData;
+  @State() data = myData;
   @State() json = '';
 
   //   componentWillLoad() {
