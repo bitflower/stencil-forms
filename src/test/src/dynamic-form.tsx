@@ -78,9 +78,7 @@ export class DynamicForm {
 
     return (
       <Host>
-        <form
-        // onInput={this.onSubmit} ref={(el) => (this.formEl = el)}
-        >
+        <form onInput={this.onSubmit} ref={(el) => (this.formEl = el)}>
           {dynamicControls.map((ctl) => (
             <section>
               <div>
@@ -90,7 +88,7 @@ export class DynamicForm {
                 data.{ctl.ctl.name}: {this.data[ctl.ctl.name]}
               </div>
               <div>
-                <input type={ctl.ctl.type} required {...ctl.binding()} />
+                <input name={ctl.ctl.name} type={ctl.ctl.type} required {...ctl.binding()} />
               </div>
               <div {...validationFor(ctl.binding)}>{validationMessage(ctl.binding)}</div>
             </section>
