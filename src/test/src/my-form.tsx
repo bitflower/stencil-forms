@@ -1,3 +1,4 @@
+import '@ionic/core';
 import { Component, h, Host, Prop, State } from '@stencil/core';
 import {
   bind,
@@ -25,6 +26,7 @@ import {
 export class MyForm {
   @Prop() login = false;
   @Prop() fullName = 'Marty McFly';
+  @Prop() color = 'red';
   @Prop() email = '';
   @Prop() userName = '';
   @Prop() age = 17;
@@ -95,6 +97,16 @@ export class MyForm {
       onCommit({ value }) {
         console.log(`volume commit: ${value}`);
       },
+    });
+
+    const ionSelect = control(this.color, {
+      onValueChange: ({ value }) => {
+        this.color = value;
+      },
+      changeEventName: 'onIonChange',
+      // onCommit({ value }) {
+      //   console.log(`volume commit: ${value}`);
+      // },
     });
 
     const vegetarian = controlBoolean(this.vegetarian, {
@@ -290,6 +302,15 @@ export class MyForm {
                 <option selected={this.hoodScoop}>true</option>
                 <option selected={!this.hoodScoop}>false</option>
               </select>
+            </div>
+          </section>
+          <section>
+            <label {...labelFor(hoodScoop)}>Hood Scoop: {String(this.hoodScoop)}</label>
+            <div>
+              <ion-select name="color" {...ionSelect()}>
+                <ion-select-option value="red">red</ion-select-option>
+                <ion-select-option value="blue">blue</ion-select-option>
+              </ion-select>
             </div>
           </section>
           <section>

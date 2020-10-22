@@ -1,4 +1,4 @@
-import { g as getRenderingRef, f as forceUpdate, r as registerInstance, h, e as Host } from './index-4b905869.js';
+import { o as getRenderingRef, m as forceUpdate, r as registerInstance, i as h, j as Host } from './index-995e3267.js';
 
 const appendToMap = (map, propName, value) => {
     const items = map.get(propName);
@@ -269,7 +269,9 @@ const checkValidity = (ctrlData, ctrlState, ctrlElm, event, cb) => {
       // need to do a new validation
       const callbackId = ++ctrlState.c;
       ctrlState.l = event.value;
-      ctrlElm.setCustomValidity((ctrlState.e = ''));
+      if (ctrlElm.setCustomValidity) {
+        ctrlElm.setCustomValidity((ctrlState.e = ''));
+      }
       if (!ctrlElm.validity.valid) {
         // native browser constraint
         ctrlState.e = ctrlElm.validationMessage;
@@ -284,7 +286,9 @@ const checkValidity = (ctrlData, ctrlState, ctrlElm, event, cb) => {
             : isFunction(ctrlData.activelyValidatingMessage)
               ? ctrlData.activelyValidatingMessage(event)
               : `Validating...`;
-          ctrlElm.setCustomValidity(ctrlState.m);
+          if (ctrlElm.setCustomValidity) {
+            ctrlElm.setCustomValidity(ctrlState.m);
+          }
           results
             .then((promiseResults) => checkValidateResults(promiseResults, ctrlData, ctrlElm, event, callbackId, cb))
             .catch((err) => checkValidateResults(err, ctrlData, ctrlElm, event, callbackId, cb));
@@ -310,10 +314,12 @@ const checkValidateResults = (results, ctrlData, ctrlElm, event, callbackId, cb)
     const ctrlState = ctrlStates.get(ctrlElm);
     if (ctrlState && (ctrlState.c === callbackId || (!ctrlElm.validity.valid && !ctrlElm.validity.customError))) {
       const msg = isString(results) ? results.trim() : '';
-      ctrlElm.setCustomValidity(msg);
+      if (ctrlElm.setCustomValidity) {
+        ctrlElm.setCustomValidity(msg);
+      }
       ctrlState.e = ctrlElm.validationMessage;
       ctrlState.m = '';
-      if (!ctrlElm.validity.valid && showNativeReport(ctrlElm)) {
+      if (!ctrlElm.validity.valid && showNativeReport(ctrlElm) && ctrlElm.reportValidity) {
         ctrlElm.reportValidity();
       }
     }
@@ -323,7 +329,9 @@ const checkValidateResults = (results, ctrlData, ctrlElm, event, callbackId, cb)
   }
 };
 const catchError = (ctrlState, event, err) => {
-  event.ctrl.setCustomValidity((ctrlState.e = String(err.message || err)));
+  if (event.ctrl.setCustomValidity) {
+    event.ctrl.setCustomValidity((ctrlState.e = String(err.message || err)));
+  }
   ctrlState.m = '';
 };
 /**
@@ -417,13 +425,13 @@ const isDirty = (ctrl) => !!getControlState(ctrl).d;
  * `false`.
  */
 const isTouched = (ctrl) => !!getControlState(ctrl).t;
-const submitValidity = (message) => {
-  return {
-    ref(btn) {
+const submitValidity = (message) => ({
+  ref(btn) {
+    if (btn && btn.setCustomValidity) {
       btn.setCustomValidity(message !== null && message !== void 0 ? message : '');
-    },
-  };
-};
+    }
+  },
+});
 
 const labellingFor = (ctrl, groupItemValue, labellingType, setAttrs) => {
   state.r = null;
@@ -820,7 +828,7 @@ const inputControlGroupItem = (selectedGroupValue, parentCtrl, parentCtrlData, c
 const ctrlElmRef = (ctrl, ctrlData, ctrlState, ctrlElm, isParentGroup) => {
   // we just got a reference to the control input element
   let ctrlId = ctrlElm.getAttribute('id');
-  let ctrlName = ctrlElm.getAttribute('name');
+  let ctrlName = ctrlElm.getAttribute('name') || ctrlElm.name;
   let labellingElm = labellingElms[0 /* labelledby */].get(ctrl);
   if (!ctrlId) {
     ctrlId = ctrlData.i;
@@ -905,6 +913,7 @@ const MyForm = class {
     registerInstance(this, hostRef);
     this.login = false;
     this.fullName = 'Marty McFly';
+    this.color = 'red';
     this.email = '';
     this.userName = '';
     this.age = 17;
@@ -969,6 +978,12 @@ const MyForm = class {
         console.log(`volume commit: ${value}`);
       },
     });
+    const ionSelect = control(this.color, {
+      onValueChange: ({ value }) => {
+        this.color = value;
+      },
+      changeEventName: 'onIonChange',
+    });
     const vegetarian = controlBoolean(this.vegetarian, {
       onValueChange: ({ value }) => (this.vegetarian = !!value),
       onCommit({ value }) {
@@ -1020,7 +1035,7 @@ const MyForm = class {
         'is-validating': isActivelyValidating(userName),
         'is-valid': isValid(userName),
         'is-invalid': isInvalid(userName),
-      } }, h("div", null, h("label", Object.assign({}, labelFor(userName)), "User Name")), h("div", Object.assign({}, descriptionFor(userName)), "(500ms debounce, 3s async validation)"), h("div", null, h("input", Object.assign({ required: true }, userName()))), h("div", { class: "actively-validating", hidden: !isActivelyValidating(userName) }, activelyValidatingMessage(userName)), h("div", Object.assign({}, validationFor(userName)), validationMessage(userName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(volume)), "Volume")), h("div", Object.assign({}, descriptionFor(age)), "These go to eleven: ", this.volume), h("div", null, h("input", Object.assign({ type: "range", min: "0", max: "11" }, volume()))), h("div", Object.assign({}, validationFor(volume)), validationMessage(volume))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(vegetarian)), "Vegetarian")), h("div", Object.assign({}, descriptionFor(vegetarian)), "Are you a vegetarian? ", String(this.vegetarian)), h("div", null, h("input", Object.assign({ type: "checkbox" }, vegetarian()))), h("div", Object.assign({}, validationFor(vegetarian)), validationMessage(vegetarian))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(busy)), "Busy: ", String(this.busy))), h("div", null, h("input", Object.assign({ type: "checkbox" }, busy())))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(specialInstructions)), "Special Instructions")), h("div", Object.assign({}, descriptionFor(specialInstructions)), "(Uses the browser's default error popup message, rather than using a custom validationFor() method.)"), h("div", null, h("textarea", Object.assign({ required: true }, specialInstructions())))), h("section", Object.assign({}, favoriteCar()), h("div", Object.assign({ class: "group-label" }, labelFor(favoriteCar)), "Favorite Car"), h("div", Object.assign({}, descriptionFor(favoriteCar)), "What's your favorite car? ", this.favoriteCar), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'mustang')), "Mustang"), h("input", Object.assign({ type: "radio" }, favoriteCar('mustang')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'camaro')), "Camaro"), h("input", Object.assign({ type: "radio" }, favoriteCar('camaro')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'challenger')), "Challenger"), h("input", Object.assign({ type: "radio" }, favoriteCar('challenger')))), h("div", Object.assign({}, validationFor(favoriteCar)), validationMessage(favoriteCar))), h("section", null, h("label", Object.assign({}, labelFor(carBodyStyle)), "Car Body Style: ", this.carBodyStyle), h("div", null, h("select", Object.assign({}, carBodyStyle()), h("option", null), h("option", { value: "fastback" }, "Fastback"), h("option", { value: "coupe" }, "Coupe"), h("option", { value: "convertible" }, "Convertible")), h("div", Object.assign({}, validationFor(carBodyStyle)), validationMessage(carBodyStyle)))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("select", Object.assign({}, hoodScoop()), h("option", { selected: this.hoodScoop }, "true"), h("option", { selected: !this.hoodScoop }, "false")))), h("section", null, h("button", Object.assign({ type: "submit" }, submitValidity(!this.login ? 'Bad auth. Add ?token=test' : undefined)), "Submit"))), this.json !== '' ? h("pre", null, "Form Submit ", this.json) : null, h("section", { class: "counter" }, "Counter (just to test re-rendering scenarios):", h("button", { onClick: () => this.counter-- }, "-"), " ", this.counter, ' ', h("button", { onClick: () => this.counter++ }, "+"))));
+      } }, h("div", null, h("label", Object.assign({}, labelFor(userName)), "User Name")), h("div", Object.assign({}, descriptionFor(userName)), "(500ms debounce, 3s async validation)"), h("div", null, h("input", Object.assign({ required: true }, userName()))), h("div", { class: "actively-validating", hidden: !isActivelyValidating(userName) }, activelyValidatingMessage(userName)), h("div", Object.assign({}, validationFor(userName)), validationMessage(userName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(volume)), "Volume")), h("div", Object.assign({}, descriptionFor(age)), "These go to eleven: ", this.volume), h("div", null, h("input", Object.assign({ type: "range", min: "0", max: "11" }, volume()))), h("div", Object.assign({}, validationFor(volume)), validationMessage(volume))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(vegetarian)), "Vegetarian")), h("div", Object.assign({}, descriptionFor(vegetarian)), "Are you a vegetarian? ", String(this.vegetarian)), h("div", null, h("input", Object.assign({ type: "checkbox" }, vegetarian()))), h("div", Object.assign({}, validationFor(vegetarian)), validationMessage(vegetarian))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(busy)), "Busy: ", String(this.busy))), h("div", null, h("input", Object.assign({ type: "checkbox" }, busy())))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(specialInstructions)), "Special Instructions")), h("div", Object.assign({}, descriptionFor(specialInstructions)), "(Uses the browser's default error popup message, rather than using a custom validationFor() method.)"), h("div", null, h("textarea", Object.assign({ required: true }, specialInstructions())))), h("section", Object.assign({}, favoriteCar()), h("div", Object.assign({ class: "group-label" }, labelFor(favoriteCar)), "Favorite Car"), h("div", Object.assign({}, descriptionFor(favoriteCar)), "What's your favorite car? ", this.favoriteCar), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'mustang')), "Mustang"), h("input", Object.assign({ type: "radio" }, favoriteCar('mustang')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'camaro')), "Camaro"), h("input", Object.assign({ type: "radio" }, favoriteCar('camaro')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'challenger')), "Challenger"), h("input", Object.assign({ type: "radio" }, favoriteCar('challenger')))), h("div", Object.assign({}, validationFor(favoriteCar)), validationMessage(favoriteCar))), h("section", null, h("label", Object.assign({}, labelFor(carBodyStyle)), "Car Body Style: ", this.carBodyStyle), h("div", null, h("select", Object.assign({}, carBodyStyle()), h("option", null), h("option", { value: "fastback" }, "Fastback"), h("option", { value: "coupe" }, "Coupe"), h("option", { value: "convertible" }, "Convertible")), h("div", Object.assign({}, validationFor(carBodyStyle)), validationMessage(carBodyStyle)))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("select", Object.assign({}, hoodScoop()), h("option", { selected: this.hoodScoop }, "true"), h("option", { selected: !this.hoodScoop }, "false")))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("ion-select", Object.assign({ name: "color" }, ionSelect()), h("ion-select-option", { value: "red" }, "red"), h("ion-select-option", { value: "blue" }, "blue")))), h("section", null, h("button", Object.assign({ type: "submit" }, submitValidity(!this.login ? 'Bad auth. Add ?token=test' : undefined)), "Submit"))), this.json !== '' ? h("pre", null, "Form Submit ", this.json) : null, h("section", { class: "counter" }, "Counter (just to test re-rendering scenarios):", h("button", { onClick: () => this.counter-- }, "-"), " ", this.counter, ' ', h("button", { onClick: () => this.counter++ }, "+"))));
   }
 };
 MyForm.style = myFormCss;

@@ -94,7 +94,7 @@ const inputControlGroupItem = (selectedGroupValue, parentCtrl, parentCtrlData, c
 const ctrlElmRef = (ctrl, ctrlData, ctrlState, ctrlElm, isParentGroup) => {
     // we just got a reference to the control input element
     let ctrlId = ctrlElm.getAttribute('id');
-    let ctrlName = ctrlElm.getAttribute('name');
+    let ctrlName = ctrlElm.getAttribute('name') || ctrlElm.name;
     let labellingElm = labellingElms[0 /* labelledby */].get(ctrl);
     if (!ctrlId) {
         ctrlId = ctrlData.i;

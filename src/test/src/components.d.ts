@@ -10,6 +10,7 @@ export namespace Components {
         "age": number;
         "busy": boolean;
         "carBodyStyle": string;
+        "color": string;
         "counter": number;
         "email": string;
         "favoriteCar": string;
@@ -38,6 +39,7 @@ declare namespace LocalJSX {
         "age"?: number;
         "busy"?: boolean;
         "carBodyStyle"?: string;
+        "color"?: string;
         "counter"?: number;
         "email"?: string;
         "favoriteCar"?: string;
