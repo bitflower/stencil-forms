@@ -1,4 +1,4 @@
-import { o as getRenderingRef, m as forceUpdate, r as registerInstance, i as h, j as Host } from './index-995e3267.js';
+import { o as getRenderingRef, m as forceUpdate, r as registerInstance, i as h, j as Host } from './index-a0f13ec6.js';
 
 const appendToMap = (map, propName, value) => {
     const items = map.get(propName);
@@ -906,18 +906,17 @@ const normalizeControlOpts = (ctrlOpts, valuePropType = 'string') => {
   return Object.assign({ i: propName, n: propName, valuePropType }, ctrlOpts);
 };
 
-const myFormCss = "body{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', 'Helvetica Neue', sans-serif}form button{position:relative;cursor:pointer;background:#ccc;margin:10px 0 0 0;padding:5px;font-size:16px}form:invalid button{background:#eee;color:#aaa}form:invalid button::after{position:absolute;padding-left:20px;content:'form:invalid';color:red;white-space:nowrap}form:valid button::after{position:absolute;padding-left:20px;content:'form:valid';color:green;white-space:nowrap}label,.group-label{font-weight:bold}[role='alert']{color:red}input:valid{border:1px solid green}input:invalid{border:1px solid red}.is-validating{background:rgba(255, 255, 0, 0.2)}.is-valid{background:rgba(0, 128, 0, 0.2)}.is-invalid{background:rgba(255, 0, 0, 0.1)}.actively-validating{background-color:#ddd;font-style:italic}.is-dirty{color:purple}.is-touched{color:blue}pre{background:#eee;padding:10px}section{padding:10px;border-bottom:1px solid gray}section:last-child{border-bottom:none}.counter{font-size:12px}";
+const myFormCss = "body{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', 'Helvetica Neue', sans-serif}form button{position:relative;cursor:pointer;background:#ccc;margin:10px 0 0 0;padding:5px;font-size:16px}form:invalid button{background:#eee;color:#aaa}form:invalid button::after{position:absolute;padding-left:20px;content:'form:invalid';color:red;white-space:nowrap}form:valid button::after{position:absolute;padding-left:20px;content:'form:valid';color:green;white-space:nowrap}label,.group-label{font-weight:bold}[role='alert']{color:red}input:valid{border:1px solid green}input:invalid{border:1px solid red}ion-input .native-input:invalid{border:1px solid red}.is-validating{background:rgba(255, 255, 0, 0.2)}.is-valid{background:rgba(0, 128, 0, 0.2)}.is-invalid{background:rgba(255, 0, 0, 0.1)}.actively-validating{background-color:#ddd;font-style:italic}.is-dirty{color:purple}.is-touched{color:blue}pre{background:#eee;padding:10px}section{padding:10px;border-bottom:1px solid gray}section:last-child{border-bottom:none}.counter{font-size:12px}";
 
 const MyForm = class {
   constructor(hostRef) {
     registerInstance(this, hostRef);
     this.login = false;
     this.fullName = 'Marty McFly';
-    this.color = 'red';
+    this.color = ''; // 'red';
     this.email = '';
     this.userName = '';
     this.age = 17;
-    this.volume = 11;
     this.vegetarian = false;
     this.busy = true;
     this.specialInstructions = '';
@@ -941,7 +940,9 @@ const MyForm = class {
     }
   }
   render() {
-    const fullName = bind(this, 'fullName');
+    const fullName = bind(this, 'fullName', {
+      changeEventName: 'onIonChange',
+    });
     const email = bind(this, 'email');
     const userName = bind(this, 'userName', {
       debounce: 500,
@@ -971,6 +972,14 @@ const MyForm = class {
       },
     });
     const volume = control(this.volume, {
+      validate({ value }) {
+        if (parseInt(value) < 5) {
+          return 'Please set volume > 5';
+        }
+        if (parseInt(value) >= 10) {
+          return 'This is too loud!';
+        }
+      },
       onValueChange: ({ value }) => {
         this.volume = value;
       },
@@ -982,7 +991,6 @@ const MyForm = class {
       onValueChange: ({ value }) => {
         this.color = value;
       },
-      changeEventName: 'onIonChange',
     });
     const vegetarian = controlBoolean(this.vegetarian, {
       onValueChange: ({ value }) => (this.vegetarian = !!value),
@@ -1027,7 +1035,7 @@ const MyForm = class {
         console.log(`hood scoop commit: ${value}`);
       },
     });
-    return (h(Host, null, h("form", { onSubmit: this.onSubmit }, h("section", null, h("div", null, h("label", Object.assign({}, labelFor(fullName)), "Name")), h("div", Object.assign({}, descriptionFor(fullName)), "What's your full name? ", this.fullName), h("div", null, h("input", Object.assign({ required: true }, fullName()))), h("span", Object.assign({}, validationFor(fullName)), validationMessage(fullName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(email)), "Email")), h("div", Object.assign({ class: {
+    return (h(Host, null, h("form", { onSubmit: this.onSubmit, onInput: (e) => console.log('form onInput', e) }, h("section", null, h("div", null, h("label", Object.assign({}, labelFor(fullName)), "Name")), h("div", Object.assign({}, descriptionFor(fullName)), "What's your full name? ", this.fullName), h("div", null, h("ion-input", Object.assign({ required: true, minlength: 5, maxlength: 10 }, fullName()))), h("span", Object.assign({}, validationFor(fullName)), validationMessage(fullName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(email)), "Email")), h("div", Object.assign({ class: {
         'is-dirty': isDirty(email),
       } }, descriptionFor(email)), "(Purple means the input is \"dirty\" because the value has changed)"), h("div", null, h("input", Object.assign({ id: "my-email-id", name: "my-email-name", type: "email", required: true }, email()))), h("div", Object.assign({}, validationFor(email)), validationMessage(email))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(age)), "Age")), h("div", Object.assign({ class: {
         'is-touched': isTouched(age),
@@ -1035,7 +1043,7 @@ const MyForm = class {
         'is-validating': isActivelyValidating(userName),
         'is-valid': isValid(userName),
         'is-invalid': isInvalid(userName),
-      } }, h("div", null, h("label", Object.assign({}, labelFor(userName)), "User Name")), h("div", Object.assign({}, descriptionFor(userName)), "(500ms debounce, 3s async validation)"), h("div", null, h("input", Object.assign({ required: true }, userName()))), h("div", { class: "actively-validating", hidden: !isActivelyValidating(userName) }, activelyValidatingMessage(userName)), h("div", Object.assign({}, validationFor(userName)), validationMessage(userName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(volume)), "Volume")), h("div", Object.assign({}, descriptionFor(age)), "These go to eleven: ", this.volume), h("div", null, h("input", Object.assign({ type: "range", min: "0", max: "11" }, volume()))), h("div", Object.assign({}, validationFor(volume)), validationMessage(volume))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(vegetarian)), "Vegetarian")), h("div", Object.assign({}, descriptionFor(vegetarian)), "Are you a vegetarian? ", String(this.vegetarian)), h("div", null, h("input", Object.assign({ type: "checkbox" }, vegetarian()))), h("div", Object.assign({}, validationFor(vegetarian)), validationMessage(vegetarian))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(busy)), "Busy: ", String(this.busy))), h("div", null, h("input", Object.assign({ type: "checkbox" }, busy())))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(specialInstructions)), "Special Instructions")), h("div", Object.assign({}, descriptionFor(specialInstructions)), "(Uses the browser's default error popup message, rather than using a custom validationFor() method.)"), h("div", null, h("textarea", Object.assign({ required: true }, specialInstructions())))), h("section", Object.assign({}, favoriteCar()), h("div", Object.assign({ class: "group-label" }, labelFor(favoriteCar)), "Favorite Car"), h("div", Object.assign({}, descriptionFor(favoriteCar)), "What's your favorite car? ", this.favoriteCar), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'mustang')), "Mustang"), h("input", Object.assign({ type: "radio" }, favoriteCar('mustang')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'camaro')), "Camaro"), h("input", Object.assign({ type: "radio" }, favoriteCar('camaro')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'challenger')), "Challenger"), h("input", Object.assign({ type: "radio" }, favoriteCar('challenger')))), h("div", Object.assign({}, validationFor(favoriteCar)), validationMessage(favoriteCar))), h("section", null, h("label", Object.assign({}, labelFor(carBodyStyle)), "Car Body Style: ", this.carBodyStyle), h("div", null, h("select", Object.assign({}, carBodyStyle()), h("option", null), h("option", { value: "fastback" }, "Fastback"), h("option", { value: "coupe" }, "Coupe"), h("option", { value: "convertible" }, "Convertible")), h("div", Object.assign({}, validationFor(carBodyStyle)), validationMessage(carBodyStyle)))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("select", Object.assign({}, hoodScoop()), h("option", { selected: this.hoodScoop }, "true"), h("option", { selected: !this.hoodScoop }, "false")))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("ion-select", Object.assign({ name: "color" }, ionSelect()), h("ion-select-option", { value: "red" }, "red"), h("ion-select-option", { value: "blue" }, "blue")))), h("section", null, h("button", Object.assign({ type: "submit" }, submitValidity(!this.login ? 'Bad auth. Add ?token=test' : undefined)), "Submit"))), this.json !== '' ? h("pre", null, "Form Submit ", this.json) : null, h("section", { class: "counter" }, "Counter (just to test re-rendering scenarios):", h("button", { onClick: () => this.counter-- }, "-"), " ", this.counter, ' ', h("button", { onClick: () => this.counter++ }, "+"))));
+      } }, h("div", null, h("label", Object.assign({}, labelFor(userName)), "User Name")), h("div", Object.assign({}, descriptionFor(userName)), "(500ms debounce, 3s async validation)"), h("div", null, h("input", Object.assign({ required: true }, userName()))), h("div", { class: "actively-validating", hidden: !isActivelyValidating(userName) }, activelyValidatingMessage(userName)), h("div", Object.assign({}, validationFor(userName)), validationMessage(userName))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(volume)), "Volume")), h("div", Object.assign({}, descriptionFor(age)), "These go to eleven: ", this.volume), h("div", null, h("input", Object.assign({ type: "range", min: "0", max: "11" }, volume()))), h("div", Object.assign({}, validationFor(volume)), validationMessage(volume))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(vegetarian)), "Vegetarian")), h("div", Object.assign({}, descriptionFor(vegetarian)), "Are you a vegetarian? ", String(this.vegetarian)), h("div", null, h("input", Object.assign({ type: "checkbox" }, vegetarian()))), h("div", Object.assign({}, validationFor(vegetarian)), validationMessage(vegetarian))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(busy)), "Busy: ", String(this.busy))), h("div", null, h("input", Object.assign({ type: "checkbox" }, busy())))), h("section", null, h("div", null, h("label", Object.assign({}, labelFor(specialInstructions)), "Special Instructions")), h("div", Object.assign({}, descriptionFor(specialInstructions)), "(Uses the browser's default error popup message, rather than using a custom validationFor() method.)"), h("div", null, h("textarea", Object.assign({ required: true }, specialInstructions())))), h("section", Object.assign({}, favoriteCar()), h("div", Object.assign({ class: "group-label" }, labelFor(favoriteCar)), "Favorite Car"), h("div", Object.assign({}, descriptionFor(favoriteCar)), "What's your favorite car? ", this.favoriteCar), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'mustang')), "Mustang"), h("input", Object.assign({ type: "radio" }, favoriteCar('mustang')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'camaro')), "Camaro"), h("input", Object.assign({ type: "radio" }, favoriteCar('camaro')))), h("div", null, h("label", Object.assign({}, labelFor(favoriteCar, 'challenger')), "Challenger"), h("input", Object.assign({ type: "radio" }, favoriteCar('challenger')))), h("div", Object.assign({}, validationFor(favoriteCar)), validationMessage(favoriteCar))), h("section", null, h("label", Object.assign({}, labelFor(carBodyStyle)), "Car Body Style: ", this.carBodyStyle), h("div", null, h("select", Object.assign({}, carBodyStyle()), h("option", null), h("option", { value: "fastback" }, "Fastback"), h("option", { value: "coupe" }, "Coupe"), h("option", { value: "convertible" }, "Convertible")), h("div", Object.assign({}, validationFor(carBodyStyle)), validationMessage(carBodyStyle)))), h("section", null, h("label", Object.assign({}, labelFor(hoodScoop)), "Hood Scoop: ", String(this.hoodScoop)), h("div", null, h("select", Object.assign({}, hoodScoop()), h("option", { selected: this.hoodScoop }, "true"), h("option", { selected: !this.hoodScoop }, "false")))), h("section", null, h("label", Object.assign({}, labelFor(ionSelect)), "Color: ", String(this.color)), h("div", null, h("my-select", Object.assign({ required: true, name: "color" }, ionSelect())), h("div", Object.assign({}, validationFor(ionSelect)), validationMessage(ionSelect)))), h("section", null, h("button", Object.assign({ type: "submit" }, submitValidity(!this.login ? 'Bad auth. Add ?token=test' : undefined)), "Submit"))), this.json !== '' ? h("pre", null, "Form Submit ", this.json) : null, h("section", { class: "counter" }, "Counter (just to test re-rendering scenarios):", h("button", { onClick: () => this.counter-- }, "-"), " ", this.counter, ' ', h("button", { onClick: () => this.counter++ }, "+"))));
   }
 };
 MyForm.style = myFormCss;

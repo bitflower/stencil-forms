@@ -20,7 +20,11 @@ export namespace Components {
         "specialInstructions": string;
         "userName": string;
         "vegetarian": boolean;
-        "volume": number;
+        "volume": any;
+    }
+    interface MySelect {
+        "name": string;
+        "required": boolean;
     }
 }
 declare global {
@@ -30,8 +34,15 @@ declare global {
         prototype: HTMLMyFormElement;
         new (): HTMLMyFormElement;
     };
+    interface HTMLMySelectElement extends Components.MySelect, HTMLStencilElement {
+    }
+    var HTMLMySelectElement: {
+        prototype: HTMLMySelectElement;
+        new (): HTMLMySelectElement;
+    };
     interface HTMLElementTagNameMap {
         "my-form": HTMLMyFormElement;
+        "my-select": HTMLMySelectElement;
     }
 }
 declare namespace LocalJSX {
@@ -49,10 +60,15 @@ declare namespace LocalJSX {
         "specialInstructions"?: string;
         "userName"?: string;
         "vegetarian"?: boolean;
-        "volume"?: number;
+        "volume"?: any;
+    }
+    interface MySelect {
+        "name"?: string;
+        "required"?: boolean;
     }
     interface IntrinsicElements {
         "my-form": MyForm;
+        "my-select": MySelect;
     }
 }
 export { LocalJSX as JSX };
@@ -60,6 +76,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "my-form": LocalJSX.MyForm & JSXBase.HTMLAttributes<HTMLMyFormElement>;
+            "my-select": LocalJSX.MySelect & JSXBase.HTMLAttributes<HTMLMySelectElement>;
         }
     }
 }

@@ -49,6 +49,10 @@ input:invalid {
   border: 1px solid red;
 }
 
+ion-input .native-input:invalid {
+  border: 1px solid red;
+}
+
 .is-validating {
   background: rgba(255, 255, 0, 0.2);
 }

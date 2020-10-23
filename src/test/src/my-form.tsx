@@ -26,11 +26,11 @@ import {
 export class MyForm {
   @Prop() login = false;
   @Prop() fullName = 'Marty McFly';
-  @Prop() color = 'red';
+  @Prop() color = ''; // 'red';
   @Prop() email = '';
   @Prop() userName = '';
   @Prop() age = 17;
-  @Prop() volume = 11;
+  @Prop() volume; //  = 11;
   @Prop() vegetarian = false;
   @Prop() busy = true;
   @Prop() specialInstructions = '';
@@ -56,7 +56,9 @@ export class MyForm {
   };
 
   render() {
-    const fullName = bind(this, 'fullName');
+    const fullName = bind(this, 'fullName', {
+      changeEventName: 'onIonChange',
+    });
 
     const email = bind(this, 'email');
 
@@ -91,6 +93,14 @@ export class MyForm {
     });
 
     const volume = control(this.volume, {
+      validate({ value }) {
+        if (parseInt(value) < 5) {
+          return 'Please set volume > 5';
+        }
+        if (parseInt(value) >= 10) {
+          return 'This is too loud!';
+        }
+      },
       onValueChange: ({ value }) => {
         this.volume = value;
       },
@@ -103,7 +113,8 @@ export class MyForm {
       onValueChange: ({ value }) => {
         this.color = value;
       },
-      changeEventName: 'onIonChange',
+      // changeEventName: 'onIonChange',
+
       // onCommit({ value }) {
       //   console.log(`volume commit: ${value}`);
       // },
@@ -160,14 +171,15 @@ export class MyForm {
 
     return (
       <Host>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onSubmit} onInput={(e) => console.log('form onInput', e)}>
           <section>
             <div>
               <label {...labelFor(fullName)}>Name</label>
             </div>
             <div {...descriptionFor(fullName)}>What's your full name? {this.fullName}</div>
             <div>
-              <input required {...fullName()} />
+              <ion-input required minlength={5} maxlength={10} {...fullName()} />
+              {/* <input required {...fullName()} /> */}
             </div>
             <span {...validationFor(fullName)}>{validationMessage(fullName)}</span>
           </section>
@@ -305,12 +317,14 @@ export class MyForm {
             </div>
           </section>
           <section>
-            <label {...labelFor(hoodScoop)}>Hood Scoop: {String(this.hoodScoop)}</label>
+            <label {...labelFor(ionSelect)}>Color: {String(this.color)}</label>
             <div>
-              <ion-select name="color" {...ionSelect()}>
+              <my-select required name="color" {...ionSelect()} />
+              {/* <ion-select name="color" {...ionSelect()}>
                 <ion-select-option value="red">red</ion-select-option>
                 <ion-select-option value="blue">blue</ion-select-option>
-              </ion-select>
+              </ion-select> */}
+              <div {...validationFor(ionSelect)}>{validationMessage(ionSelect)}</div>
             </div>
           </section>
           <section>
